@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jarvis — Cognitive Companion</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar / Dashboard -->
+    <aside id="dashboard">
+      <div class="dash-header">
+        <div class="jarvis-logo">
+          <span class="logo-dot"></span>
+          <h1>Jarvis</h1>
+        </div>
+        <span class="subtitle">Cognitive Companion</span>
+      </div>
+
+      <div class="dash-section">
+        <h3>Current Mood</h3>
+        <div id="current-mood" class="mood-display">—</div>
+      </div>
+
+      <div class="dash-section">
+        <h3>Focus Task</h3>
+        <div id="current-task" class="task-display">—</div>
+      </div>
+
+      <div class="dash-section">
+        <h3>Active Goals</h3>
+        <ul id="active-goals" class="goal-list"></ul>
+      </div>
+
+      <div class="dash-section">
+        <h3>Recurring Emotions</h3>
+        <div id="recurring-emotions" class="emotion-list"></div>
+      </div>
+
+      <div class="dash-section">
+        <h3>Brain Map</h3>
+        <div id="brainmap-summary" class="brainmap-summary">No thoughts mapped yet.</div>
+      </div>
+
+      <div class="dash-section insights-panel">
+        <h3>Insights</h3>
+        <div id="insight-feed" class="insight-feed"></div>
+      </div>
+
+      <div class="dash-footer">
+        <span class="status-dot"></span>
+        <span id="status-text">Ready</span>
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main id="chat-area">
+      <header id="chat-header">
+        <div class="header-left">
+          <button id="menu-toggle" class="icon-btn" aria-label="Toggle dashboard">☰</button>
+          <div class="header-info">
+            <span class="jarvis-greeting" id="greeting-text">Good evening, Sir.</span>
+            <span class="time-display" id="time-display"></span>
+          </div>
+        </div>
+        <div class="header-right">
+          <button id="voice-toggle" class="icon-btn" aria-label="Toggle voice mode">🎤</button>
+          <button id="command-btn" class="icon-btn" aria-label="Commands">⌘</button>
+        </div>
+      </header>
+
+      <div id="messages-container">
+        <div id="messages"></div>
+      </div>
+
+      <div id="suggestions-bar" class="suggestions-bar">
+        <button class="suggestion-chip" data-text="How was your day?">How was your day?</button>
+        <button class="suggestion-chip" data-text="What should I focus on?">What should I focus on?</button>
+        <button class="suggestion-chip" data-text="I feel anxious">I feel anxious</button>
+        <button class="suggestion-chip" data-text="Show my patterns">Show my patterns</button>
+      </div>
+
+      <footer id="input-area">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="message-input"
+            placeholder="Message Jarvis..."
+            autocomplete="off"
+            aria-label="Message input"
+          />
+          <button id="send-btn" aria-label="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+          </button>
+        </div>
+        <div id="voice-indicator" class="voice-indicator hidden">
+          <span class="pulse-ring"></span>
+          Listening...
+        </div>
+      </footer>
+    </main>
+
+    <!-- Brain Map Modal -->
+    <div id="brainmap-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Thought Graph</h2>
+          <button class="icon-btn modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div id="brainmap-canvas" class="brainmap-canvas"></div>
+      </div>
+    </div>
+
+    <!-- Brain Replay Modal -->
+    <div id="replay-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Brain Replay</h2>
+          <button class="icon-btn modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div id="replay-content" class="replay-content"></div>
+      </div>
+    </div>
+
+    <!-- Journal Modal -->
+    <div id="journal-modal" class="modal hidden">
+      <div class="modal-backdrop"></div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Daily Journal</h2>
+          <button class="icon-btn modal-close" aria-label="Close">&times;</button>
+        </div>
+        <div id="journal-content" class="journal-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/memory.js"></script>
+  <script src="js/jarvis-core.js"></script>
+  <script src="js/patterns.js"></script>
+  <script src="js/insights.js"></script>
+  <script src="js/thoughtgraph.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/commands.js"></script>
+  <script src="js/chat-interface.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
