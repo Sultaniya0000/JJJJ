@@ -28,13 +28,8 @@ app.post('/api/chat', async (req, res) => {
     const tags = autoTag(message);
     db.addThought(message.trim(), tags);
 
-    // Try AI-generated response
-    let aiResponse = await ai.generateResponse(message.trim());
-
-    // Fallback if no API key or AI fails
-    if (!aiResponse) {
-      aiResponse = fallbackResponse(message, tags);
-    }
+    // Generate response (AI or rich fallback)
+    const aiResponse = await ai.generateResponse(message.trim());
 
     // Store AI response
     db.addMessage('assistant', aiResponse);
@@ -283,70 +278,10 @@ function buildThoughtChain(thoughts, query, max) {
     .slice(-max);
 }
 
-function fallbackResponse(message, tags) {
-  const lower = message.toLowerCase();
-
-  if (/^(hi|hello|hey|good\s*morn|good\s*after|good\s*eve)/i.test(message)) {
-    const hour = new Date().getHours();
-    const g = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
-    return `Good ${g}, Sir. How are you feeling today?`;
-  }
-
-  if (tags.includes('Anxiety')) {
-    return `I hear you, Sir. Anxiety can feel consuming. Can you tell me more about what's triggering it right now?`;
-  }
-  if (tags.includes('Fear')) {
-    return `Fear has a way of amplifying itself. What specifically is frightening you right now, Sir?`;
-  }
-  if (tags.includes('Sadness')) {
-    return `I'm here with you, Sir. Sadness is not something to fix — it's something to understand. Would you like to explore it?`;
-  }
-  if (tags.includes('Anger')) {
-    return `Anger has high energy. What boundary do you feel has been crossed, Sir?`;
-  }
-  if (tags.includes('Rejection')) {
-    return `I understand that feeling, Sir. Rejection wounds deeply. Would you like to talk about what happened?`;
-  }
-  if (tags.includes('Overwhelm')) {
-    return `When everything feels like too much, pause. Let's break things down together, Sir.`;
-  }
-  if (tags.includes('Fatigue')) {
-    return `Mental fatigue is real, Sir. When was the last time you truly rested without guilt?`;
-  }
-
-  if (/task|focus|should i|important/i.test(lower)) {
-    return `What is the most important thing you need to do right now, Sir? I'll help you stay on track.`;
-  }
-  if (/distract|can't focus|unfocus/i.test(lower)) {
-    return `A scattered mind is often an overwhelmed one. Name one thing you could do for just 5 minutes, Sir.`;
-  }
-  if (/avoid|procrastinat/i.test(lower)) {
-    return `Avoidance means something matters enough to feel intimidating. What task feels heavy, Sir?`;
-  }
-
-  if (/thanks|thank you/i.test(lower)) {
-    return `You're welcome, Sir. I'm always here when you need me.`;
-  }
-  if (/bye|goodbye|talk later/i.test(lower)) {
-    return `Take care, Sir. I'll be here whenever you need me.`;
-  }
-
-  return `I'm listening, Sir. Tell me more about what's on your mind.`;
-}
-
 async function runPatternDetection() {
-  try {
-    if (!db || !ai) return;
-    if (ai.getClient()) {
-      const insights = await ai.generateInsights(db);
-      for (const ins of insights) {
-        db.addInsight(ins.text, ins.type);
-        db.addPattern(ins.text, 'auto', 'info');
-      }
-    }
-  } catch (err) {
-    console.warn('Pattern detection error:', err.message);
-  }
+  // Pattern detection is handled internally by ai.js
+  // when the API is available. This function is kept
+  // for future server-side analysis.
 }
 
 // --- Fallback for SPA (serve index.html for unknown routes) ---
@@ -363,14 +298,8 @@ async function start() {
 
   ai = require('./ai');
 
-  const key = process.env.OPENAI_API_KEY;
-  const hasKey = key && key !== 'sk-your-key-here' && key.length > 20;
   app.listen(PORT, () => {
     console.log(`Jarvis server running on http://localhost:${PORT}`);
-    console.log(`OpenAI: ${hasKey ? 'Connected' : 'NOT CONFIGURED (using fallback responses)'}`);
-    if (!hasKey) {
-      console.log('Set OPENAI_API_KEY in .env for real AI responses');
-    }
   });
 }
 
