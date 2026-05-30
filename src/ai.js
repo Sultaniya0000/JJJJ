@@ -4,10 +4,10 @@ let openai;
 
 function getClient() {
   if (!openai) {
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-your-key-here') {
-      return null;
-    }
-    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const key = process.env.OPENAI_API_KEY;
+    const baseURL = process.env.OPENAI_BASE_URL || undefined;
+    if (!key || key === 'sk-your-key-here') return null;
+    openai = new OpenAI({ apiKey: key, baseURL });
   }
   return openai;
 }
@@ -70,15 +70,20 @@ async function generateResponse(userMessage) {
 
   try {
     const completion = await client.chat.completions.create({
-      model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+      model: process.env.OPENAI_MODEL || 'deepseek-ai/deepseek-v4-pro',
       messages,
       max_tokens: 500,
       temperature: 0.7,
-    });
+    }, { timeout: 30000, maxRetries: 1 });
 
     return completion.choices[0]?.message?.content || null;
   } catch (err) {
-    console.error('OpenAI API error:', err.message);
+    if (err.status === 429) {
+      console.warn('Rate limited by API. Waiting before retry...');
+      await new Promise(r => setTimeout(r, 10000));
+    } else {
+      console.error('OpenAI API error:', err.message);
+    }
     return null;
   }
 }
